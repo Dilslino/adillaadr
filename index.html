@@ -1308,6 +1308,44 @@
             .weather-cloud { width: 54px; height: 22px; top: 18px; }
             .weather-cloud svg { width: 54px; height: 22px; }
         }
+        
+        /* Snow Animation for PIN Page */
+        .snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .snowflake {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: snowfall linear infinite;
+        }
+        
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
         /* SOS Game Modal */
         .sos-modal-bg {
             position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
@@ -1321,7 +1359,8 @@
             border-radius: 22px;
             box-shadow: 0 8px 32px #E8C07D55;
             padding: 32px 18px 24px 18px;
-            min-width: 280px; max-width: 94vw;
+            min-width: 280px;
+            max-width: 94vw;
             display: flex; flex-direction: column; align-items: center;
             position: relative;
         }
@@ -1351,7 +1390,12 @@
             .sos-cell { width: 36px; height: 36px; font-size: 1.3rem; }
             .sos-modal { padding: 18px 4px 12px 4px; }
         }
-        .countdown-playgame-row { width: 100%; display: flex; justify-content: center; margin-top: 32px; }
+        .countdown-playgame-row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
+        }
         .btn-playgame {
             background: linear-gradient(135deg, #FFD9B2 0%, #E8C07D 100%);
             color: #8B4513;
@@ -1365,11 +1409,63 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
             outline: none;
+            z-index: 2001;
+            min-width: 120px;
+            max-width: 90vw;
         }
         .btn-playgame:hover, .btn-playgame:focus {
             background: linear-gradient(135deg, #E8C07D 0%, #FFD9B2 100%);
             transform: scale(1.04);
             box-shadow: 0 6px 24px #E8C07D55;
+        }
+        @media (max-width: 600px) {
+            .countdown-playgame-row {
+                position: fixed !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                bottom: 20px !important;
+                width: auto !important;
+                margin: 0 auto !important;
+                justify-content: center !important;
+                z-index: 2001 !important;
+            }
+            .btn-playgame {
+                width: 90vw !important;
+                min-width: 0 !important;
+                max-width: 98vw !important;
+                font-size: 1.05rem !important;
+                padding: 14px 0 !important;
+                border-radius: 24px !important;
+                margin: 0 auto !important;
+                display: block !important;
+            }
+            .countdown-container {
+                padding-bottom: 80px !important;
+            }
+        }
+        /* Tambahan untuk Play Game agar presisi tengah bawah */
+        .countdown-playgame-row.fixed-center {
+            position: fixed !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            bottom: 80px !important;
+            width: auto !important;
+            margin: 0 auto !important;
+            z-index: 2001 !important;
+            display: block !important;
+            justify-content: unset !important;
+        }
+        @media (max-width: 600px) {
+            .countdown-playgame-row.fixed-center {
+                bottom: 80px !important;
+            }
+            .btn-playgame {
+                width: auto !important;
+                min-width: 120px !important;
+                max-width: 98vw !important;
+                margin: 0 auto !important;
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -1384,6 +1480,8 @@
 
     <!-- PIN Entry Section -->
     <div class="pin-container" id="pinContainer" style="position: relative;">
+        <!-- Snow Container for PIN Page -->
+        <div class="snow-container" id="snowContainer"></div>
         <div class="pin-sticker pin-sticker-left">
             <img src="sticker1.jpg" alt="sticker kiri 1">
             <img src="sticker2.jpg" alt="sticker kiri 2">
@@ -1435,6 +1533,8 @@
     <!-- Countdown Section -->
     <div class="countdown-container" id="countdownContainer">
         <div class="weather-anim" id="weatherAnim"></div>
+        <!-- Reset Button for Testing -->
+        <!-- (Dihapus sesuai permintaan) -->
         <div class="countdown-sticker countdown-sticker-left">
             <img src="sticker1.jpg" alt="sticker kiri 1">
             <img src="sticker2.jpg" alt="sticker kiri 2">
@@ -1505,17 +1605,9 @@
             </div>
           </div>
         </div>
-        <div class="countdown-playgame-row">
-            <button class="btn-playgame" id="btnPlayGame">Play Game</button>
-        </div>
-    </div>
-    <!-- SOS Game Modal -->
-    <div class="sos-modal-bg hide" id="sosModalBg">
-        <div class="sos-modal">
-            <button class="sos-close-btn" id="sosCloseBtn">&times;</button>
-            <div class="sos-title">Tic Tac Toe</div>
-            <div class="sos-result" id="sosResult"></div>
-            <div class="sos-board" id="sosBoard"></div>
+        <!-- Play Game Button (hanya di countdown) -->
+        <div class="countdown-playgame-row" style="margin:32px auto 0 auto; display:flex; justify-content:center; width:100%;">
+            <button class="btn-playgame" id="btnPlayGame" style="background:linear-gradient(135deg,#FFD9B2,#E8C07D);color:#8B4513;font-weight:600;box-shadow:0 4px 12px rgba(139,69,19,0.3);transition:all 0.3s ease;min-width:120px;max-width:98vw;">Play Game</button>
         </div>
     </div>
 
@@ -1608,17 +1700,27 @@
         <!-- Audio Controls -->
     </div>
 
+    <!-- Tambahkan modal SOS di akhir body -->
+    <div class="sos-modal-bg hide" id="sosModalBg">
+      <div class="sos-modal">
+        <button class="sos-close-btn" id="sosCloseBtn">&times;</button>
+        <div class="sos-title">SOS Game</div>
+        <div class="sos-result" id="sosResult"></div>
+        <div class="sos-board" id="sosBoard"></div>
+      </div>
+    </div>
+
     <script>
         // PIN System
         let currentPin = '';
         const correctPin = '1407'; // PIN baru
         // Atur countdown agar tidak mengulang saat refresh atau input PIN ulang
         let countdownTarget;
-        // Ambil dari localStorage jika ada, jika tidak set 2 hari 3 jam dari sekarang
+        // Ambil dari localStorage jika ada, jika tidak set 1 hari 8 jam 40 menit dari sekarang
         if (localStorage.getItem('birthdayCountdownTarget')) {
             countdownTarget = new Date(localStorage.getItem('birthdayCountdownTarget'));
         } else {
-            countdownTarget = new Date(Date.now() + (2 * 24 * 60 * 60 * 1000) + (3 * 60 * 60 * 1000)); // 2 hari 3 jam
+            countdownTarget = new Date(Date.now() + (1*24*60*60*1000 + 8*60*60*1000 + 40*60*1000)); // 1 hari 8 jam 40 menit
             localStorage.setItem('birthdayCountdownTarget', countdownTarget.toISOString());
         }
         let birthdayDate = countdownTarget;
@@ -1676,9 +1778,18 @@
         }
 
         function showCountdown() {
+            console.log('showCountdown called');
             document.getElementById('pinContainer').classList.add('hidden');
             document.getElementById('countdownContainer').classList.remove('hidden');
             document.getElementById('birthdayContainer').classList.remove('show');
+            console.log('Countdown container classes:', document.getElementById('countdownContainer').className);
+            
+            // Show weather animation only during countdown
+            const weatherAnim = document.getElementById('weatherAnim');
+            if (weatherAnim) {
+                weatherAnim.style.display = 'block';
+            }
+            
             startCountdown();
         }
 
@@ -1687,17 +1798,32 @@
             document.getElementById('pinContainer').classList.add('hidden');
             document.getElementById('countdownContainer').classList.add('hidden');
             document.getElementById('birthdayContainer').classList.add('show');
+            
+            // Hide weather animation on birthday page
+            const weatherAnim = document.getElementById('weatherAnim');
+            if (weatherAnim) {
+                weatherAnim.style.display = 'none';
+            }
+            
             createParticles();
             createConfetti();
         }
 
         // Countdown Timer
         function startCountdown() {
+            console.log('startCountdown called');
+            console.log('birthdayDate:', birthdayDate);
+            console.log('Current time:', new Date());
+            console.log('Time left:', birthdayDate - new Date());
+            
             const countdown = setInterval(() => {
                 const now = new Date();
                 const timeLeft = birthdayDate - now;
+                console.log('Time left in interval:', timeLeft);
+                
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
+                    console.log('Countdown finished!');
                     // Simpan flag ke localStorage agar tidak mengulang countdown
                     localStorage.setItem('birthdayUnlocked', 'true');
                     // showBirthday();
@@ -1843,29 +1969,131 @@
             }
         });
 
+        // Reset Countdown Function
+        function resetCountdown() {
+            // Fungsi ini sudah tidak digunakan, dibiarkan kosong atau bisa dihapus seluruhnya
+        }
+        
+        // Reset and Replay Function (for birthday page)
+        function resetAndReplay() {
+            console.log('Resetting and replaying from after countdown...');
+            
+            // Clear localStorage
+            localStorage.removeItem('birthdayUnlocked');
+            localStorage.removeItem('birthdayCountdownTarget');
+            
+            // Reset countdown target to 1 hari 8 jam 40 menit from now
+            countdownTarget = new Date(Date.now() + (1*24*60*60*1000 + 8*60*60*1000 + 40*60*1000));
+            birthdayDate = countdownTarget;
+            localStorage.setItem('birthdayCountdownTarget', countdownTarget.toISOString());
+            
+            // Hide birthday page and show countdown
+            document.getElementById('birthdayContainer').classList.remove('show');
+            document.getElementById('pinContainer').classList.add('hidden');
+            document.getElementById('countdownContainer').classList.remove('hidden');
+            
+            // Reset countdown display
+            document.getElementById('countdownTimer').style.display = 'flex';
+            document.querySelector('.music-player-premium').style.display = 'flex';
+            document.querySelector('.countdown-title').style.display = 'block';
+            document.querySelector('.countdown-sticker-left').style.display = 'block';
+            document.querySelector('.countdown-sticker-right').style.display = 'block';
+            
+            // Hide after countdown animation
+            const afterAnim = document.getElementById('afterCountdownAnim');
+            afterAnim.style.display = 'none';
+            afterAnim.style.opacity = '1';
+            
+            // Clear PIN
+            currentPin = '';
+            updatePinDisplay();
+            
+            // Start countdown immediately
+            startCountdown();
+            
+            console.log('Reset and replay complete. New target:', countdownTarget);
+        }
+        
         // Initialize
         // Cek localStorage sebelum apapun
-        if (localStorage.getItem('birthdayUnlocked') === 'true') {
-            document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded triggered');
+            console.log('birthdayUnlocked:', localStorage.getItem('birthdayUnlocked'));
+            console.log('countdownTarget:', countdownTarget);
+            
+            // Setup reset buttons
+            const resetBtn = document.getElementById('resetCountdownBtn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', resetCountdown);
+            }
+            
+            if (localStorage.getItem('birthdayUnlocked') === 'true') {
+                console.log('Showing birthday page directly');
                 document.getElementById('pinContainer').classList.add('hidden');
                 document.getElementById('countdownContainer').classList.add('hidden');
                 document.getElementById('birthdayContainer').classList.add('show');
                 createParticles();
                 createConfetti();
+                // Play birthday music when birthday page is shown directly
+                playBirthdayMusic();
+            } else {
+                console.log('Showing PIN page first');
+                // Tampilkan PIN container sebagai default
+                document.getElementById('pinContainer').classList.remove('hidden');
+                document.getElementById('countdownContainer').classList.add('hidden');
+                document.getElementById('birthdayContainer').classList.remove('show');
+                
+                // Hide weather animation on PIN page
+                const weatherAnim = document.getElementById('weatherAnim');
+                if (weatherAnim) {
+                    weatherAnim.style.display = 'none';
+                }
+                
+                // Start snow animation on PIN page
+                createSnow();
+            }
+            // Setup Play Game button event listener
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'btnPlayGame') {
+                    openSosGame();
+                }
             });
-        } else {
-            // Saat halaman dibuka
-            // ...seluruh kode PIN dan countdown tetap berjalan di sini...
-        }
+        });
 
+        // Birthday Music Player
+        let birthdayMusic = null;
+        
+        function playBirthdayMusic() {
+            if (!birthdayMusic) {
+                birthdayMusic = new Audio('hbdmusic.mp3');
+                birthdayMusic.volume = 0.7;
+                birthdayMusic.loop = true; // Loop the birthday music
+            }
+            
+            // Play the birthday music
+            birthdayMusic.play().catch(error => {
+                console.log('Autoplay prevented, user interaction required');
+            });
+        }
+        
         // After Countdown Animation Sequence
         function triggerAfterCountdownAnim() {
+            // Play birthday music when countdown finishes
+            playBirthdayMusic();
+            
             // Hide countdown content, show after-anim
             document.getElementById('countdownTimer').style.display = 'none';
             document.querySelector('.music-player-premium').style.display = 'none';
             document.querySelector('.countdown-title').style.display = 'none';
             document.querySelector('.countdown-sticker-left').style.display = 'none';
             document.querySelector('.countdown-sticker-right').style.display = 'none';
+            
+            // Hide Play Game button during animation
+            const playGameRow = document.querySelector('.countdown-playgame-row');
+            if (playGameRow) {
+                playGameRow.style.display = 'none';
+            }
+            
             const afterAnim = document.getElementById('afterCountdownAnim');
             afterAnim.style.display = 'flex';
             // Step 1: Hey animation
@@ -2027,6 +2255,37 @@
             updateSlider();
         })();
 
+        // Snow Animation for PIN Page
+        function createSnow() {
+            const snowContainer = document.getElementById('snowContainer');
+            if (!snowContainer) return;
+            
+            // Clear existing snowflakes
+            snowContainer.innerHTML = '';
+            
+            // Create snowflakes
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const snowflake = document.createElement('div');
+                    snowflake.className = 'snowflake';
+                    snowflake.style.left = Math.random() * 100 + '%';
+                    snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    snowflake.style.animationDelay = Math.random() * 2 + 's';
+                    snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+                    snowflake.style.width = (Math.random() * 4 + 3) + 'px';
+                    snowflake.style.height = snowflake.style.width;
+                    snowContainer.appendChild(snowflake);
+                    
+                    // Remove snowflake after animation
+                    setTimeout(() => {
+                        if (snowflake.parentNode) {
+                            snowflake.remove();
+                        }
+                    }, 5000);
+                }, i * 100);
+            }
+        }
+        
         // Weather Animation Cycle
         const weatherAnim = document.getElementById('weatherAnim');
         let weatherState = 0; // 0: rain, 1: sun, 2: cloud
@@ -2067,32 +2326,36 @@
         setInterval(cycleWeather, 60000); // 1 menit
 
         // SOS Game Logic
-        const btnPlayGame = document.getElementById('btnPlayGame');
+        let sosGame, sosPlayer = 'love', sosAI = 'x';
         const sosModalBg = document.getElementById('sosModalBg');
         const sosCloseBtn = document.getElementById('sosCloseBtn');
         const sosBoard = document.getElementById('sosBoard');
         const sosResult = document.getElementById('sosResult');
-        let sosGame, sosPlayer = 'heart', sosAI = 'x';
-        btnPlayGame.onclick = () => { openSosGame(); };
-        sosCloseBtn.onclick = () => { sosModalBg.classList.add('hide'); };
+
+        // Event delegation agar tombol Play Game selalu berfungsi
+        // (Sudah ada di DOMContentLoaded, tidak perlu ulangi)
+        if (sosCloseBtn) sosCloseBtn.onclick = () => { sosModalBg.classList.add('hide'); };
+
         function openSosGame() {
             sosModalBg.classList.remove('hide');
             sosResult.textContent = '';
             sosGame = Array(9).fill('');
             renderSosBoard();
         }
+
         function renderSosBoard() {
             sosBoard.innerHTML = '';
             for (let i = 0; i < 9; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'sos-cell' + (sosGame[i] === 'x' ? ' x' : sosGame[i] === 'heart' ? ' heart' : '');
-                cell.innerHTML = sosGame[i] === 'x' ? 'X' : sosGame[i] === 'heart' ? '❤️' : '';
+                cell.className = 'sos-cell' + (sosGame[i] === 'x' ? ' x' : sosGame[i] === 'love' ? ' love' : '');
+                cell.innerHTML = sosGame[i] === 'x' ? 'X' : sosGame[i] === 'love' ? '❤️' : '';
                 cell.onclick = () => { if (!sosGame[i] && !checkSosWinner(sosGame)) playerMove(i); };
                 sosBoard.appendChild(cell);
             }
         }
+
         function playerMove(idx) {
-            sosGame[idx] = 'heart';
+            sosGame[idx] = 'love';
             renderSosBoard();
             if (checkSosWinner(sosGame)) {
                 sosResult.textContent = 'Congrats You Won My Heart';
@@ -2100,6 +2363,7 @@
             }
             setTimeout(aiMove, 400);
         }
+
         function aiMove() {
             // Cari langkah kalah (AI mengalah)
             let move = findLosingMove();
@@ -2115,6 +2379,7 @@
                 sosResult.textContent = 'Congrats You Won My Heart';
             }
         }
+
         function findLosingMove() {
             // Cari langkah yang tidak menang, AI mengalah
             let empties = sosGame.map((v,i)=>v?'':i).filter(v=>v!=='');
@@ -2125,6 +2390,7 @@
             }
             return -1;
         }
+
         function checkSosWinner(board) {
             const win = [
                 [0,1,2],[3,4,5],[6,7,8],
