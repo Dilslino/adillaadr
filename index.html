@@ -1720,7 +1720,7 @@
         if (localStorage.getItem('birthdayCountdownTarget')) {
             countdownTarget = new Date(localStorage.getItem('birthdayCountdownTarget'));
         } else {
-            countdownTarget = new Date(Date.now() + (1*24*60*60*1000 + 8*60*60*1000 + 40*60*1000)); // 1 hari 8 jam 40 menit
+            countdownTarget = new Date(Date.now() + 60*1000); // 1 menit
             localStorage.setItem('birthdayCountdownTarget', countdownTarget.toISOString());
         }
         let birthdayDate = countdownTarget;
@@ -1982,8 +1982,8 @@
             localStorage.removeItem('birthdayUnlocked');
             localStorage.removeItem('birthdayCountdownTarget');
             
-            // Reset countdown target to 1 hari 8 jam 40 menit from now
-            countdownTarget = new Date(Date.now() + (1*24*60*60*1000 + 8*60*60*1000 + 40*60*1000));
+            // Reset countdown target to 1 menit dari sekarang
+            countdownTarget = new Date(Date.now() + 60*1000);
             birthdayDate = countdownTarget;
             localStorage.setItem('birthdayCountdownTarget', countdownTarget.toISOString());
             
